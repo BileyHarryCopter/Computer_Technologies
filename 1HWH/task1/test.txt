@@ -1,0 +1,2 @@
+1 ls -lR ../ > hui.txt
+5 ./fib1 15
