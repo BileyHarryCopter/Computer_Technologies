@@ -167,7 +167,6 @@ void execute_func(const int sec, char *command, char *flags[])
     {
         if ((command[0] == '.') && (execv(command, flags) < 0))
         {
-            printf("ГОЙДА!\n");
             printf("Unsuccessful execution of the program\n");
             exit(-1);
         }
