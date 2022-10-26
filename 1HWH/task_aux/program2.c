@@ -8,6 +8,7 @@
 enum
 {
     LEN_PATH = 100,
+    MAX_NUMB = 1000
 };
 
 int main(char argc, char *argv[])
@@ -36,12 +37,6 @@ int main(char argc, char *argv[])
     }
     else if (process == 0)
     {
-        if (close(fd) < 0)
-        {
-            printf("Can't close output stream\n");
-            exit(-1);
-        }
-
         char delcom[LEN_PATH] = "rm -rf ";
         strcat(delcom, argv[1]);
 
@@ -50,6 +45,25 @@ int main(char argc, char *argv[])
             printf("Unsuccessful execution of the program\n");
             exit(-1);
         }
+    }
+    else
+    {
+        char *info_dir = (char *)calloc(MAX_NUMB, sizeof(char));
+        int numb_read = read(fd, info_dir, MAX_NUMB);
+        if (numb_read < 0)
+        {
+            printf("Toby pizda, tikai s gorodu!\n");
+            exit(-1);
+        }
+
+        if (close(fd) < 0)
+        {
+            printf("Can't close output stream\n");
+            exit(-1);
+        }
+
+        printf("%s\n", info_dir);
+        free(info_dir);
     }
 
     return 0;

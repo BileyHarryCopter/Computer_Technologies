@@ -45,7 +45,7 @@ int main(char argc, char *argv[])
     }
 
     int fd = 0;
-    if ((fd = open(file_name, O_WRONLY) < 0))
+    if ((fd = open(file_name, O_WRONLY)) < 0)
     {
         printf("Failure with openning fifo_file\n");
         exit(-1);
@@ -76,9 +76,6 @@ int main(char argc, char *argv[])
             strcat(command, dir_name);
             strcat(command, " ");
         }
-
-        printf("%s\n", command);
-
         if (execl("/bin/bash", "/bin/bash", "-c", command) < 0)
         {
             printf("Unsuccessful execution of the program\n");
