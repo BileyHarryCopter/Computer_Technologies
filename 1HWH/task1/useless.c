@@ -139,6 +139,7 @@ void free_flags(char **flags)
     {
         free(flags[pos]);
     }
+    free(flags);
 }
 
 char *get_command(char *flags[])
@@ -174,6 +175,7 @@ void execute_func(const int sec, char *command, char *flags[])
         {
             char *sys_com = get_command(flags);
             execl("/bin/bash", "/bin/bash", "-c", sys_com, (char *)NULL);
+            free(sys_com);
         }
     }
     else
@@ -245,6 +247,7 @@ execent_ar *lexer_primitive(const char *file_name)
     exe_array->size = ipos;
     qsort(exe_array->execent_i, exe_array->size, sizeof(execent), execent_cmp);
     execent_dump(exe_array);
+    free(buffer);
 
     return exe_array;
 }
@@ -254,6 +257,7 @@ int lexer_delete(execent_ar *array)
     int max = array->size;
     for (int i = 0; i < max; ++i)
     {
+        printf("%d\n", i);
         free_flags(array->execent_i[i].flags);
     }
     free(array);
