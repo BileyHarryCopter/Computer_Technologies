@@ -9,7 +9,8 @@
 
 enum
 {
-    LEN_PATH = 100,
+    DEFAULT = 1,
+    LEN_PATH = 100
 };
 
 char *get_path(const char *file, const char *dir)
@@ -26,6 +27,7 @@ char *get_path(const char *file, const char *dir)
 
 int main(char argc, char *argv[])
 {
+
     if (argc != 2 && argc != 3)
     {
         printf("Not enough arguments\n");
@@ -34,7 +36,6 @@ int main(char argc, char *argv[])
 
     char *file_name = argv[1];
     char *dir_name = argv[2];
-    char *path = get_path(file_name, dir_name);
 
     umask(0);
     if (mkfifo(file_name, 0666) < 0)
@@ -43,23 +44,46 @@ int main(char argc, char *argv[])
         exit(-1);
     }
 
-    char command[LEN_PATH] = "ls ";
-    if (dir_name == NULL)
-        strcat(command, ". ");
+    int fd = 0;
+    if ((fd = open(file_name, O_WRONLY) < 0))
+    {
+        printf("Failure with openning fifo_file\n");
+        exit(-1);
+    }
+
+    pid_t process = fork();
+
+    if (process < 0)
+    {
+        printf("Failure with fork\n");
+        exit(-1);
+    }
+    else if (process == 0)
+    {
+        if (close(fd) < 0)
+        {
+            printf("Can't close fifo_file\n");
+            exit(-1);
+        }
+    }
     else
     {
-        strcat(command, dir_name);
-        strcat(command, " ");
-    }
-    strcat(command, "> ");
-    strcat(command, file_name);
+        char command[LEN_PATH] = "ls ";
+        if (dir_name == NULL)
+            strcat(command, ". ");
+        else
+        {
+            strcat(command, dir_name);
+            strcat(command, " ");
+        }
 
-    printf("%s\n", command);
+        printf("%s\n", command);
 
-    if (execl("/bin/bash", "/bin/bash", "-c", command) < 0)
-    {
-        printf("Unsuccessful execution of the program\n");
-        exit(-1);
+        if (execl("/bin/bash", "/bin/bash", "-c", command) < 0)
+        {
+            printf("Unsuccessful execution of the program\n");
+            exit(-1);
+        }
     }
 
     return 0;
