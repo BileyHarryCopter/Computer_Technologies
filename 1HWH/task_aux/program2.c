@@ -52,7 +52,7 @@ int main(char argc, char *argv[])
         int numb_read = read(fd, info_dir, MAX_NUMB);
         if (numb_read < 0)
         {
-            printf("Toby pizda, tikai s gorodu!\n");
+            printf("Can't read file\n");
             exit(-1);
         }
 
