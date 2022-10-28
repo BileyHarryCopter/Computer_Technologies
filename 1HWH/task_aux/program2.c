@@ -37,7 +37,9 @@ int main(char argc, char *argv[])
     }
     else if (process == 0)
     {
-        char delcom[LEN_PATH] = "rm -rf ";
+        sleep(1);
+
+        char delcom[LEN_PATH] = "rm -rf jep.txt ";
         strcat(delcom, argv[1]);
 
         if ((execl("/bin/bash", "/bin/bash", "-c", delcom) < 0))
@@ -52,7 +54,7 @@ int main(char argc, char *argv[])
         int numb_read = read(fd, info_dir, MAX_NUMB);
         if (numb_read < 0)
         {
-            printf("Can't read file\n");
+            printf("Can't read fifo\n");
             exit(-1);
         }
 
