@@ -1,6 +1,3 @@
-#ifndef RUNSIM
-#define RUNSIM
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,8 +19,7 @@ enum KEYS
 int getnumb(const char *str);
 int getcmd(char **cmd);
 int delcmd(char *cmd);
-int execute(int limit_numb);
+int execute(const char *cmd);
+int run(const char *cmd);
 void handler(int signal);
 void handler_kill_all_process(int signal);
-
-#endif RUNSIM
