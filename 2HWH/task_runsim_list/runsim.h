@@ -21,19 +21,14 @@
 #define STACK_SIZE (1024 * 1024)
 char child_stack[STACK_SIZE];
 
-typedef struct arg_namespace
-{
-    int limit_numb;
-    int active_cmd_numb;
-    int *child_pids;
-} arg_t;
-
 enum KEYS
 {
     SHMID = 0,
+    NO_LIST = 0,
+    LIST = 1,
     CURRENT = 1,
     LIMIT = 2,
-    STOP = 2,
+    STOP = 3,
     MAXLEN = 100,
     OPTIMAL_NUMBER_OF_CMD = 10
 };
@@ -43,5 +38,7 @@ int delcmd(char *cmd);
 int getcmd(char **cmd);
 void handler(int signal);
 int getnumb(const char *str);
+int execute_res(const char *cmd);
+int execute_list(const char *cmd);
 int execute(const char *cmd);
 int *shminit(const char *file_name);
