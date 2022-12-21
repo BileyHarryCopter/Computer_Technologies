@@ -133,6 +133,8 @@ int execute_res(const char *cmd)
     int pid = 0;
     int *arg = shminit("runsim.c");
 
+    signal(SIGCHLD, handler_list);
+
     printf("Command: \"%s\"\n", cmd);
     arg[CURRENT] += 1;
     printf("Number of active program: %d\n", arg[CURRENT]);
@@ -144,37 +146,7 @@ int execute_res(const char *cmd)
         printf("Can't create child's process\n");
         exit(-1);
     }
-    else if (aux_res == 0)
-    {
-        pid = execute_list(cmd);
-        for (int i = LIMIT + 1, capacity = 2 * OPTIMAL_NUMBER_OF_CMD;
-             i < capacity; i++)
-        {
-            if (arg[i] == pid)
-            {
-                arg[i] = 0;
-                break;
-            }
-        }
-        arg[CURRENT]--;
-        printf("Number of active program: %d\n", arg[CURRENT]);
-    }
-
-    return 0;
-}
-
-int execute_list(const char *cmd)
-{
-    int *arg = shminit("runsim.c");
-
-    pid_t aux_res = fork();
-
-    if (aux_res < 0)
-    {
-        printf("Can't create child's process\n");
-        exit(-1);
-    }
-    else if (aux_res == 0)
+    else if (aux_res == 0) //  inside the child process
     {
         for (int i = LIMIT + 1, capacity = 2 * OPTIMAL_NUMBER_OF_CMD;
              i < capacity; ++i)
@@ -190,34 +162,8 @@ int execute_list(const char *cmd)
         if (res_exec < 0)
             printf("Error execute\n");
     }
-    else
-    {
-        pid_t pid = getpid();
-        for (int i = LIMIT + 1, capacity = 2 * OPTIMAL_NUMBER_OF_CMD;
-             i < capacity; ++i)
-        {
-            if (arg[i] == 0)
-            {
-                arg[i] = pid;
-                break;
-            }
-        }
 
-        int status;
-        pid_t candidate = wait(&status);
-
-        for (int i = LIMIT + 1, capacity = 2 * OPTIMAL_NUMBER_OF_CMD;
-             i < capacity; i++)
-        {
-            if (arg[i] == pid)
-            {
-                arg[i] = 0;
-                break;
-            }
-        }
-
-        return candidate;
-    }
+    return 0;
 }
 
 int execute(const char *cmd)
@@ -287,6 +233,28 @@ void handler(int signal)
     {
         status_cmd--; //  reducing number of active processes
         printf("Number of active program: %d\n\n", status_cmd);
+    }
+}
+
+void handler_list(int signal)
+{
+    if (signal == SIGCHLD)
+    {
+        int *arg = shminit("runsim.c");
+
+        int pid_died = waitpid(-1, NULL, WNOHANG);
+
+        for (int i = LIMIT + 1, capacity = 2 * OPTIMAL_NUMBER_OF_CMD;
+             i < capacity; i++)
+        {
+            if (arg[i] == pid_died)
+            {
+                arg[i] = 0;
+                break;
+            }
+        }
+        arg[CURRENT]--;
+        printf("Number of active program: %d\n", arg[CURRENT]);
     }
 }
 

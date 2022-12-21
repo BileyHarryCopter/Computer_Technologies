@@ -17,6 +17,8 @@
 #include <sys/shm.h>
 //  for errors
 #include <errno.h>
+//  for waitpid
+#include <wait.h>
 
 #define STACK_SIZE (1024 * 1024)
 char child_stack[STACK_SIZE];
@@ -37,6 +39,7 @@ int run();
 int delcmd(char *cmd);
 int getcmd(char **cmd);
 void handler(int signal);
+void handler_list(int signal);
 int getnumb(const char *str);
 int execute_res(const char *cmd);
 int execute_list(const char *cmd);
