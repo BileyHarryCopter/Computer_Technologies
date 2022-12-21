@@ -6,11 +6,10 @@
 //  for signals
 #include <wait.h>
 #include <signal.h>
+#include <stdbool.h>
 
 enum KEYS
 {
-    false = 0,
-    true = 1,
     STOP = 2,
     MAXLEN = 100,
     OPTIMAL_NUMBER_OF_CMD = 10

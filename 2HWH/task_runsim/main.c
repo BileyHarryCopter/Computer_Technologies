@@ -17,25 +17,29 @@ int main(char argc, char *argv[])
 
     for (; true;)
     {
-        getcmd(&cmd);
+        memset(cmd, '\0', MAXLEN);
+        fflush(stdin);
 
-        if (number_active_cmd == limit_numb)
+        int status = getcmd(&cmd);
+
+        if ((status == STOP) || (strcmp(cmd, "$") == 0))
+        {
+            memset(cmd, '\0', MAXLEN);
+            fflush(stdin);
+            break;
+        }
+        else if (number_active_cmd == limit_numb)
         {
             printf("Sorry, the limit of active process has been approached. Wait a minute\n");
             continue;
         }
         else
         {
-            printf("Command: \"%s\"\n", cmd);
-            number_active_cmd++;
-            printf("Number of active program: %d\n", number_active_cmd);
             execute(cmd);
         }
-        memset(cmd, '\0', MAXLEN);
-        fflush(stdin);
     }
-
     free(cmd);
+
     return 0;
 }
 
@@ -50,6 +54,10 @@ void handler(int signal)
 
 int execute(const char *cmd)
 {
+    printf("Command: \"%s\"\n", cmd);
+    number_active_cmd++;
+    printf("Number of active program: %d\n", number_active_cmd);
+
     signal(SIGCHLD, handler);
 
     pid_t aux_res = fork();
@@ -87,5 +95,9 @@ int getcmd(char **cmd)
         symb = getc(stdin);
     }
     if (symb == EOF)
-        kill(-getpid(), SIGINT);
+    {
+        fflush(stdin);
+        memset(*cmd, '\0', MAXLEN);
+        return STOP;
+    }
 }
