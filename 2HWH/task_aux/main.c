@@ -27,6 +27,12 @@ int main(char argc, char *argv[])
     }
 
     int fd = open(file_name, O_RDWR | O_CREAT, 0666);
+    if (fd < 0)
+    {
+        printf("Can't open the file %s\n", file_name);
+        exit(-1);
+    }
+
     ftruncate(fd, FILE_SIZE);
 
     //  mapping the file to the virtual memory
@@ -51,6 +57,11 @@ int main(char argc, char *argv[])
     {
         char *tmp_ptr = file_ptr;
         int source_fd = open("main.c", O_RDONLY, 0666);
+        if (fd < 0)
+        {
+            printf("Can't open the main.c\n");
+            exit(-1);
+        }
 
         read(source_fd, tmp_ptr, FILE_SIZE);
 
